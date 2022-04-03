@@ -8,4 +8,4 @@ Multiple Images include
 1 - Client Image
 2 - Worker Image
 3 - Postgres Image
-4 - Refis Image
+4 - Redis Image
