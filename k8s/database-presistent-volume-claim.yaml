@@ -1,0 +1,11 @@
+# Database Volume Claim for Postgres
+apiVersion: v1
+kind: PersistentVolumeClaim # it's not an actual volume, it's something we're going to attach to Pod config and Kube Master will attach the volume
+metadata:
+  name: database-persistent-volume-claim
+spec:
+  accessModes:
+    - ReadWriteOnce # Instance of storage that can be used by a single node(pod)
+  resources:
+    requests:
+      storage: 2Gi

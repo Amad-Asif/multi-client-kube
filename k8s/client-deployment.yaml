@@ -1,0 +1,20 @@
+# Deployment of client image with 3 client Pods running
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: web # With selector and label it will identify the different pods it will manage
+  template:
+    metadata:
+      labels:
+        component: web
+    spec:
+      containers:
+        - name: client
+          image: amadasif/multi-client
+          ports:
+            - containerPort: 3000 # Port mapped up to the multi-client image

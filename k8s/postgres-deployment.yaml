@@ -1,0 +1,38 @@
+# Deployment of postgres image
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deloyment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: postgres
+  template:
+    metadata:
+      labels:
+        component: postgres
+    spec:
+      # Add configuration related to persistent volume claim, sets up requests to Kube to create the Persistent Volume Claim
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: database-persistent-volume-claim # The name defined in persistent volume claim
+      containers:
+        - name: postgres
+          image: postgres
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-storage # This name must be same as volume's name
+              mountPath: /var/lib/postgresql/data  # Where inside the container this should be made available
+              subPath: postgres
+          # Override the default postgres password
+          env:
+            - name: PGPASSWORD # If Postgres sees this env variable of PG Password it's going to use that as the password rather than default
+              valueFrom: # Rather than value env variable we will specify whee to fetch from
+                secretKeyRef:
+                  name: pgpassword # This is the name of environment variable that we stored in secret
+                  key: PGPASSWORD
+            - name: POSTGRES_HOST_AUTH_METHOD # Only for local to run without any configuration
+              value: trust

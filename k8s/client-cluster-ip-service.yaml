@@ -1,0 +1,16 @@
+# Cluster Ip service for Client Deployment
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-cluster-ip-service
+spec:
+  type: ClusterIP
+  # The selector here needs to be same as client-deployment's property so it properly selects the client deployment
+  selector:
+    component: web
+  ports:
+    # Port concention will be same as we did for type NodePort but the NodePort property
+    # The Port property will be how other pods or objects will access the Pod that we're governing access to
+    # The targetPort will be the port on the target pod that we are providing access to
+    - port: 3000 # if we change this to 3050 means outside object will have access to port 3000 through port 3050
+      targetPort: 3000

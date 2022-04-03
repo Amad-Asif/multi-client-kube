@@ -1,0 +1,39 @@
+# Deployment of server image with 3 client Pods running
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      # These key values can be anything, but just needs to be same across objects
+      component: server # With selector and label it will identify the different pods it will manage
+  template:
+    metadata:
+      labels:
+        component: server
+    spec: # customise the behaviour of each Pod that is created
+      containers:
+        - name: server
+          image: amadasif/multi-server
+          ports:
+            - containerPort: 5000 # Port mapped up to the multi-server image
+          env:
+            - name: REDIS_HOST
+              value: redis-cluster-ip-service # Name of Cluster Ip Service
+            - name: REDIS_PORT
+              value: '6379'
+            - name: PGUSER
+              value: postgres
+            - name: PGHOST
+              value: postgres-cluster-ip-service # Name of Cluster IP Service that's managing the Pod
+            - name: PGPORT
+              value: '5432'
+            - name: PGDATABASE
+              value: postgres
+            - name: PGPASSWORD
+              valueFrom: # Rather than value env variable we will specify whee to fetch from
+                secretKeyRef:
+                  name: pgpassword # This is the name of environment variable that we stored in secret
+                  key: PGPASSWORD
